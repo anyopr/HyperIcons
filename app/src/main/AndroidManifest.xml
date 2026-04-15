@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+        <intent>
+            <action android:name="org.adw.launcher.THEMES" />
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent>
+        <intent>
+            <action android:name="com.novalauncher.THEMES" />
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent>
+        <intent>
+            <action android:name="org.adw.launcher.icons.ACTION_PICK_ICON" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.PICK" />
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.GET_CONTENT" />
+            <data android:mimeType="image/*" />
+        </intent>
+        <intent>
+            <action android:name="com.gau.go.launcherex.theme" />
+        </intent>
+        <intent>
+            <action android:name="net.oneplus.launcher.icons.ACTION_PICK_ICON" />
+        </intent>
+        <package android:name="com.android.thememanager" />
+    </queries>
+
+    <application
+        android:label="@string/app_name"
+        android:theme="@style/Theme.IconPacker"
+        android:allowBackup="true"
+        android:supportsRtl="true">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+    </application>
+</manifest>
