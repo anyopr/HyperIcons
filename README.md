@@ -1,25 +1,34 @@
-# icon-pack-to-mui
+# HyperIcons
 
-One-screen Android app that turns Arcticons (or any CandyBar-based icon pack) into
-a HyperOS/MIUI `.mtz` theme and asks the system theme manager to apply it — no
-Peafowl, no MTZ Tester in the happy path.
+One-screen Android app that turns an icon pack (Arcticons or any CandyBar-based
+pack) into a HyperOS/MIUI `.mtz` theme and hands it straight to the system theme
+manager.
+
+## Why
+
+Applying an icon pack on HyperOS today means two extra apps: **Peafowl** to
+build the theme, **MTZ Tester** to apply it. HyperIcons collapses that into a
+single step — pick icons, tap **Apply**, done.
 
 ## How it works
 
-1. Reads Arcticons' `appfilter.xml` out of its installed APK.
-2. Lists every launchable app and auto-matches by `ComponentName`.
-3. Unmatched apps get a **Pick** button that opens Arcticons' own icon picker —
-   you search/browse there and tap the icon you want.
+1. Discovers installed icon packs and parses their `appfilter.xml`.
+2. Lists launchable apps and share-sheet targets, auto-matches by component.
+3. Unmatched apps get a **Pick** button that opens the icon pack's own picker —
+   search/browse, tap the icon you want.
 4. Choices persist in a local Room DB, so on the next run only *new* apps need
    attention.
-5. **Apply** builds an icons-only `.mtz` and fires `Intent.ACTION_VIEW` at
-   `com.android.thememanager`. If HyperOS 3 rejects the direct intent, the app
-   falls back to a generic chooser (lets MTZ Tester handle it) and, failing that,
-   exports the `.mtz` to `Android/data/de.bitbin.iconpacker/files/exports/`.
+5. **Apply** builds an icons-only `.mtz` (activity-qualified PNGs plus a
+   per-package fallback so Quick Share / Print / Xiaomi Share resolve) and fires
+   the theme manager's `ApplyThemeForScreenshot` entry point, with a
+   Downloads-visible copy as the fallback path.
+6. **Wallpaper** FAB deep-links to HyperOS's super wallpaper list
+   (`theme://zhuti.xiaomi.com/superwallpaperlist`) so you can pick Saturn /
+   Faraway Rings / etc. right after applying.
 
 ## Build
 
-You need a JDK 17+ and the Android SDK with platform 34 installed.
+JDK 17+ and the Android SDK with platform 34.
 
 ```bash
 # one-time: generate the gradle wrapper (needs a system gradle 8.x)
@@ -33,16 +42,15 @@ Or open the project in Android Studio and hit Run.
 
 ## Install + run
 
-1. Install Arcticons on the device (F-Droid or Play).
+1. Install an icon pack on the device (Arcticons from F-Droid or Play).
 2. `adb install -r app/build/outputs/apk/debug/app-debug.apk`
-3. Launch **Icon Packer**, tap **Pick** for any app marked *unmatched*, then tap
-   **Apply** at the bottom.
+3. Launch **HyperIcons**, tap **Pick** for any app marked *unmatched*, then tap
+   **Apply**.
 
 ## Known rough edges
 
-- The MTZ layout uses `<package>.png` inside the nested `icons` zip. If HyperOS 3
-  ignores those, swap `MtzBuilder.nameFor()` to use `<package>_<activity>.png`
-  or the MIUI md5-of-component scheme.
-- Only Arcticons is wired up (`ARCTICONS_PKG` in `MainViewModel.kt`). Any
-  CandyBar pack should work — just change the constant.
+- A handful of share-sheet targets declare their own `android:icon` and bypass
+  MIUI's theme hook — those stay unthemed regardless of `.mtz` content.
 - No preview thumbnails in the `.mtz`. Theme manager will show a blank tile.
+- The per-wallpaper detail activity is non-exported, so the Wallpaper FAB lands
+  on the list — one more tap to pick a specific super wallpaper.

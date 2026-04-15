@@ -99,7 +99,7 @@ fun AppListScreen(vm: MainViewModel = viewModel()) {
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        "Icon Packer",
+                        "HyperIcons",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
                     )
